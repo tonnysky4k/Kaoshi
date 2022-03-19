@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tonny.kaoshi.mapper.DaanMapper">
+    <resultMap id="kaot" type="com.tonny.kaoshi.entity.Daan">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="tid" property="tid" jdbcType="INTEGER"/>
+        <result column="t_asn" property="t_asn" jdbcType="VARCHAR"/>
+
+    </resultMap>
+    <select id="selectAll" resultType="com.tonny.kaoshi.entity.Daan">
+        select * from t_ans ;
+    </select>
+    <select id="selectById" parameterType="Long" resultType="com.tonny.kaoshi.entity.Daan">
+            select * from t_ans where tid =#{id}
+    </select>
+    <insert id="insertAns" parameterType="com.tonny.kaoshi.entity.Daan" >
+        insert into t_ans(id,tid,t_asn)
+        values(#{id},#{tid},#{t_asn})
+    </insert>
+    <update id ="updateAns" parameterType="com.tonny.kaoshi.entity.Daan">
+        update t_ans set t_asn=#{t_asn} where id=#{id}
+    </update>
+    <delete id="deleteAns" parameterType="Long">
+        delete from t_ans where tid=#{id}
+    </delete>
+
+</mapper>

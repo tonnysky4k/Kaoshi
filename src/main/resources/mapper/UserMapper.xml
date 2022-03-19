@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tonny.kaoshi.mapper.UserMapper">
+    <resultMap id="userType" type="com.tonny.kaoshi.entity.User">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="pho" property="pho" jdbcType="VARCHAR"/>
+        <result column="scode" property="scode" jdbcType="VARCHAR"/>
+        <result column="rol" property="rol" jdbcType="VARCHAR"/>
+        <result column="indate" property="indate" jdbcType="DATE"/>
+
+    </resultMap>
+    <select id="selectAll" resultType="com.tonny.kaoshi.entity.User">
+        select * from t_user where pho !="Admin";
+    </select>
+    <select id="selectByPho" parameterType="String" resultType="com.tonny.kaoshi.entity.User">
+            select * from t_user where pho=#{pho} limit 1
+    </select>
+    <select id="selectByNameS" parameterType="com.tonny.kaoshi.entity.User" resultType="com.tonny.kaoshi.entity.User">
+            select * from t_user where pho=#{pho} and scode=#{scode}
+    </select>
+
+    <select id="selectById" parameterType="Long" resultType="com.tonny.kaoshi.entity.User">
+        select * from t_user where id=#{id}
+    </select>
+    <insert id="insertUser" parameterType="com.tonny.kaoshi.entity.User" >
+        insert into t_user(id,pho,scode,rol,indate)
+        values(#{id},#{pho},#{scode},#{rol},#{indate})
+    </insert>
+    <update id ="updateUser" parameterType="com.tonny.kaoshi.entity.User">
+        update t_user set scode=#{scode} where pho=#{pho}
+    </update>
+
+    <delete id="deleteUser" parameterType="Long">
+        delete from t_user where id=#{id}
+    </delete>
+
+</mapper>

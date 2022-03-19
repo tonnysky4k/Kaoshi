@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html class=" js csstransforms3d"><head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>认证管理</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/page.css">
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/modernizr.js"></script>
+</head>
+<body style="background: #f6f5fa;">
+<div class="super-content">
+    <div class="superCtab">
+        <div class="ctab-title clearfix"><h3>认证管理</h3><a  class="sp-column"><i class="ico-export"></i>返回列表</a></div>
+        <div class="ctab-Main">
+            <div class="ctab-Mian-cont">
+                <div class="Mian-cont-btn clearfix">
+                    <div class="operateBtn">
+                        <a href="javascript:;" onclick="f_new()" class="greenbtn add">添加认证</a>
+                    </div>
+                    <div class="searchBar">
+                        <input type="text" id="searchId" value="" class="form-control srhTxt" placeholder="输入标题关键字搜索">
+                        <input type="button" class="srhBtn" onclick="f_search()" value="">
+                    </div>
+                </div>
+
+                <div class="Mian-cont-wrap">
+                    <div class="defaultTab-T">
+                        <table border="0" cellspacing="0" cellpadding="0" class="defaultTable">
+                            <tbody><tr>
+                                <th class="t_1">ID</th>
+                                <th class="t_2">认证名称</th>
+                                <th class="t_3">描述</th>
+                                <th class="t_4">链接</th>
+                                <th class="t_5">操作</th>
+                            </tr>
+                            </tbody></table>
+                    </div>
+                    <table id="mytab" border="0" cellspacing="0" cellpadding="0" class="defaultTable defaultTable2">
+                        <tbody>
+                        <tr class="wd" th:each="user:${renzs}">
+                            <td class="t_1" th:text="${user.id}">2015001</td>
+                            <td class="t_2"><a th:href="@{/queryRenKM(rid=${user.id})}"class="team-a" th:text="${user.rz_name}">张三个人官网</a></td>
+                            <td class="t_3"><a th:href="@{/queryRenKM(rid=${user.id})}"class="team-a" th:text="${user.rzdesc}">导出数据</a></td>
+                            <td class="t_4" th:text="${user.rzhref}">链接地址</td>
+                            <td class="t_5"><div class="btn">
+                                <a href="javascript:;" onclick="f_chakan(this)" class="Top">查看</a>
+                                <a href="javascript:;" onclick="f_chakan(this)"class="modify">修改</a>
+                                <a href="javascript:;" onclick="f_remove(this)"class="delete">删除</a>
+                            </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--main-->
+</div>
+<!--content E-->
+<!--认证添加-->
+<div class="addRenZbox layuiBox">
+    <div class="layer-title clearfix"><h2>添加认证</h2><span class="layerClose"></span></div>
+    <div class="layer-content">
+        <div hidden ><span id="rid">00</span></div>
+        <div class="aRenz clearfix"><span>认证名称：</span><textarea id="rz"></textarea></div>
+        <div class="aRenz clearfix"><span>认证描述：</span><textarea id="desc"></textarea></div>
+        <div class="aRenz clearfix"><span>认证链接：</span><textarea id="rzhref"></textarea></div>
+        <div class="aRenz clearfix">
+            <input type="button" value="新增" onclick="f_run()" class="saveBtn">
+        </div>
+    </div>
+</div>
+<script>
+    function f_insert()
+    {
+        var id =document.getElementById("rid").innerHTML;
+        var rz =document.getElementById('rz').value;
+        var rdesc=document.getElementById('desc').value;
+        var rzhref=document.getElementById('rzhref').value;
+        $.ajax({
+            url:"/insertRZ",
+            type:"post",
+            data:{id:id,rz_name:rz,rzdesc:rdesc,rzhref:rzhref},
+            dataType:"json",
+            success:function(data){
+             window.location='/renz';
+            }
+        });
+    }
+     function f_run()
+     {
+        var btns = document.getElementsByClassName("saveBtn");
+        if(btns[0].value=='新增')
+            f_insert();
+        if(btns[0].value=='修改')
+            f_update();
+     }
+    function f_new()
+    {
+        document.getElementById("rid").innerHTML='0';
+        document.getElementById("rz").value='';
+        document.getElementById("desc").value='';
+        document.getElementById("rzhref").value='';
+        var btns = document.getElementsByClassName("saveBtn");
+        btns[0].value='新增';
+        f_show();
+    }
+    function f_update()
+    {
+        var id =document.getElementById("rid").innerHTML;
+        var rz =document.getElementById('rz').value;
+        var rdesc=document.getElementById('desc').value;
+        var rzhref=document.getElementById("rzhref").value;
+         $.ajax({
+                url:"/updateRZ",
+                type:"post",
+                data:{id:id,rz_name:rz,rzdesc:rdesc,rzhref:rzhref},
+                dataType:"json",
+                success:function(data){
+                window.location="/renz";
+                }
+            });
+    }
+    function f_chakan(obj)
+    {
+        var tr=obj.parentNode.parentNode.parentNode;
+        var id =tr.getElementsByClassName('t_1')[0].innerHTML;
+        var rz =tr.getElementsByTagName("a")[0].innerHTML;
+        var rdesc=tr.getElementsByTagName("a")[1].innerHTML;
+        var rzhref=tr.getElementsByClassName('t_4')[0].innerHTML;
+
+        document.getElementById("rid").innerHTML=id;
+        document.getElementById("rz").value=rz;
+        document.getElementById("desc").value=rdesc;
+        document.getElementById("rzhref").value=rzhref;
+
+        var btns = document.getElementsByClassName("saveBtn");
+        var bname =obj.innerHTML;
+        if(bname =='查看')
+            btns[0].value='关闭';
+        if(bname =='修改')
+            btns[0].value='修改';
+        f_show();
+
+    }
+    function f_remove(obj)
+    {
+        var tr=obj.parentNode.parentNode.parentNode;
+        var id =tr.getElementsByClassName('t_1')[0].innerHTML;
+        tr.remove();
+        if(id !='0')
+        {
+            $.ajax({
+                url:"/deleteShiJ",
+                type:"post",
+                data:{id:id},
+                dataType:"json",
+                success:function(data){}
+            });
+        }
+    }
+
+    function f_show()
+    {
+        $(".layuiBg").css({
+			display:"block",height:$(document).height()
+		});
+		$(".addRenZbox").css({
+			left:($("body").width()-$(".addRenZbox").width())/2-20+"px",
+			top:($(window).height()-$(".addRenZbox").height())/2+$(window).scrollTop()+"px",
+			display:"block"
+		});
+    }
+</script>
+</body></html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>用户登录</title>
+	<link rel="stylesheet" href="css/base.css" />
+	<link rel="stylesheet" href="css/login.css" />
+	<script language="JavaScript" src="js/jquery.js"></script>
+</head>
+<script language="JavaScript">
+        function f_sendsms(){
+            var pho;
+            pho =$("#pho").val();
+            if(pho =="" )
+              {
+              	$(".errorword").html("手机号不能为空!");
+              	$(".error").css({display:"block"});
+              	return;
+              }
+            $.ajax({
+            url:"/sendsms",
+            type:"post",
+            data: {pho:pho},
+            dataType:"text",
+            success:function(data){
+            	alert("验证码已发送!");
+            },
+            error:function(data)
+            {
+            	$(".errorword").html("验证码发送错误！");
+            	$(".error").css({display:"block"});
+            	}
+            });
+        }
+        function f_commit()
+        {
+          var pho = $("#pho").val();
+          var scode=$("#scode").val();
+        	if(pho =="" | scode =="")
+              {
+              	$(".errorword").html("手机号和验证码不能为空!");
+              	$(".error").css({display:"block"});
+              	return;
+              }
+            $.ajax({
+            url:"/vali-login",
+            type:"post",
+            data: {uname:pho,scode:scode},
+            dataType:"json",
+            success:function(data){
+                var status=data;
+                if (status>0)
+                 window.location='/index';
+                else
+                {
+                	$(".errorword").html("手机号或验证码错误！");
+              		$(".error").css({display:"block"});
+              		f_reset();
+                }
+            },
+            error:function(data)
+            {
+              $(".errorword").html("手机号或验证码错误！");
+              $(".error").css({display:"block"});
+              f_reset();
+              }
+            });
+        }
+        function f_reset()
+        {
+        	$("#pho").val("");
+        	$("#scode").val("");
+        }
+</script>
+<body>
+<div class="superlogin"></div>
+<div class="loginBox">
+	<div class="loginMain">
+		<div class="tabwrap">
+			<table border="0" cellspacing="0" cellpadding="0">
+				<tr><td class="title">用户名：</td>
+					<td><input type="text" id="pho" class="form-control txt" placeholder="输入11位手机号"/></td></tr>
+				<tr><td class="title">验证码：</td>
+					<td><input type="password" id="scode" class="form-control txt2" placeholder="4位验证码" />
+					<input type="button" class="sendbtn" value="发送验证码" onclick="f_sendsms()"/></td>
+				</tr>
+				<tr><td>&nbsp;</td>
+					<td><input type="button" class="loginbtn" value="登录" onclick="f_commit()"/>
+					</td>
+				</tr>
+			</table>
+			<div class="error" hidden><i class="ico-error"></i><span class="errorword">手机号或验证码错误！</span></div>
+		</div>
+	</div>
+</div>
+<div class="footer">Copyright ? 2021-2025 Tonny1000  All Rights Reserved.</div>
+</body>
+</html>

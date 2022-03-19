@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html class=" js csstransforms3d"><head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>科目管理</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/page.css">
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/modernizr.js"></script>
+</head>
+
+<body style="background: #f6f5fa;">
+
+<div class="super-content">
+    <div class="superCtab">
+        <div class="ctab-title clearfix"><h3>科目管理</h3><a href="/renz" class="sp-column"><i class="ico-export"></i>导出列表</a></div>
+        <div class="ctab-Main">
+            <div class="ctab-Mian-cont">
+                <div class="Mian-cont-btn clearfix">
+                    <div class="operateBtn">
+                        <a href="javascript:;" onclick="f_new()" class="greenbtn add">添加科目</a>
+                        <div hidden><span id="pid" th:text="${rid}">00</span></div>
+                    </div>
+                    <div class="searchBar">
+                        <input type="text" id="searchId" value="" class="form-control srhTxt" placeholder="输入标题关键字搜索">
+                        <input type="button" class="srhBtn" onclick="f_search()" value="">
+                    </div>
+                </div>
+
+                <div class="Mian-cont-wrap">
+                    <div class="defaultTab-T">
+                        <table border="0" cellspacing="0" cellpadding="0" class="defaultTable">
+                            <tbody>
+                            <tr>
+                                <th class="t_1">科目ID</th>
+                                <th class="t_2">科目名称</th>
+                                <th class="t_3">科目描述</th>
+                                <th class="t_4">科目链接</th>
+                                <th class="t_5">操作</th>
+                            </tr>
+                            </tbody></table>
+                    </div>
+                    <table id="mytab" border="0" cellspacing="0" cellpadding="0" class="defaultTable defaultTable2">
+                        <tbody>
+                        <tr class="wd" th:each="km:${kms}">
+                            <td class="t_1" th:text="${km.id}">2015001</td>
+                            <td class="t_2"><a class="team-a" th:text="${km.rzkm}">张三个人官网</a></td>
+                            <td class="t_3"><a class="team-a" th:text="${km.rzdesc}">导出数据</a></td>
+                            <td class="t_4" th:text="${km.khref}">链接地址</td>
+                            <td class="t_5">
+                                <div class="btn">
+                                    <a href="javascript:;" onclick="f_chakan(this)" class="Top">查看</a>
+                                    <a href="javascript:;" onclick="f_chakan(this)"class="modify">修改</a>
+                                    <a href="javascript:;" onclick="f_remove(this)"class="delete">删除</a>
+                                </div>
+                            </td>
+
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--main-->
+
+</div>
+<!--content E-->
+<!--认证添加-->
+<div class="addRenZbox layuiBox">
+    <div class="layer-title clearfix"><h2>添加科目类型</h2><span class="layerClose"></span></div>
+    <div class="layer-content">
+        <div hidden ><span id="kid">00</span></div>
+        <div class="aRenz clearfix"><span>科目名称：</span><textarea id="rzkm"></textarea></div>
+        <div class="aRenz clearfix"><span>科目描述：</span><textarea id="rzdesc"></textarea></div>
+        <div class="aRenz clearfix"><span>科目链接：</span><textarea id="khref"></textarea></div>
+        <div class="aRenz clearfix">
+            <input type="button" value="新增" onclick="f_run()" class="saveBtn">
+        </div>
+    </div>
+</div>
+<script>
+     function f_update()
+    {
+        var rid =document.getElementById("pid").innerHTML;
+        var kid =document.getElementById("kid").innerHTML;
+        var rzkm =document.getElementById('rzkm').value;
+        var rzdesc=document.getElementById('rzdesc').value;
+        var khref=document.getElementById("khref").value;
+         $.ajax({
+                url:"/updateRenKM",
+                type:"post",
+                data:{id:kid,rid:rid,rzkm:rzkm,rzdesc:rzdesc,khref:khref},
+                dataType:"json",
+                success:function(data){
+                window.location='/queryRenKM?rid='+rid;
+                }
+            });
+    }
+      function f_chakan(obj)
+    {
+        var tr=obj.parentNode.parentNode.parentNode;
+        var kid =tr.getElementsByClassName('t_1')[0].innerHTML;
+        var rzkm =tr.getElementsByTagName("a")[0].innerHTML;
+        var rzdesc=tr.getElementsByTagName("a")[1].innerHTML;
+        var khref=tr.getElementsByClassName('t_4')[0].innerHTML;
+
+        document.getElementById("kid").innerHTML=kid;
+        document.getElementById("rzkm").value=rzkm;
+        document.getElementById("rzdesc").value=rzdesc;
+        document.getElementById("khref").value=khref;
+
+        var btns = document.getElementsByClassName("saveBtn");
+        var bname =obj.innerHTML;
+        if(bname =='查看')
+            btns[0].value='关闭';
+        if(bname =='修改')
+            btns[0].value='修改';
+        f_show();
+
+    }
+     function f_remove(obj)
+    {
+        var tr=obj.parentNode.parentNode.parentNode;
+        var kid =tr.getElementsByClassName('t_1')[0].innerHTML;
+        tr.remove();
+        if(kid !='0')
+        {
+            $.ajax({
+                url:"/deleteRenKM",
+                type:"post",
+                data:{id:kid},
+                dataType:"json",
+                success:function(data){}
+            });
+        }
+    }
+
+ function f_insert()
+    {
+        var kid =document.getElementById("kid").innerHTML;
+        var rid =document.getElementById("pid").innerHTML;
+        var rzkm =document.getElementById('rzkm').value;
+        var rzdesc=document.getElementById('rzdesc').value;
+        var khref=document.getElementById('khref').value;
+        $.ajax({
+            url:"/insertRenKM",
+            type:"post",
+            data:{id:kid,rid:rid,rzkm:rzkm,rzdesc:rzdesc,khref:khref},
+            dataType:"json",
+            success:function(data){
+             window.location='/queryRenKM?rid='+rid;
+            }
+        });
+    }
+     function f_run()
+     {
+        var btns = document.getElementsByClassName("saveBtn");
+        if(btns[0].value=='新增')
+            f_insert();
+        if(btns[0].value=='修改')
+            f_update();
+     }
+
+    function f_new()
+    {
+        document.getElementById("kid").innerHTML='0';
+        document.getElementById("rzkm").value='';
+        document.getElementById("rzdesc").value='';
+        document.getElementById("khref").value='';
+        var btns = document.getElementsByClassName("saveBtn");
+        btns[0].value='新增';
+        f_show();
+    }
+
+    function f_show()
+    {
+        $(".layuiBg").css({
+			display:"block",height:$(document).height()
+		});
+		$(".addRenZbox").css({
+			left:($("body").width()-$(".addRenZbox").width())/2-20+"px",
+			top:($(window).height()-$(".addRenZbox").height())/2+$(window).scrollTop()+"px",
+			display:"block"
+		});
+    }
+
+</script>
+</body></html>

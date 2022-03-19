@@ -1,0 +1,10 @@
+#tm{width:800px;height:100px;}
+.form{
+width:80%;
+height:80%;
+margin-left:50px;
+border:blue 1px solid;
+}
+.da{width:800px;height:60px;}
+label{margin-left:50px;align:center;}
+input{border:blue 1px solid;}

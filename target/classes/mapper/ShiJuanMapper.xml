@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tonny.kaoshi.mapper.ShiJuanMapper">
+
+    <select id="selectAll" resultType="com.tonny.kaoshi.entity.KmShijuan">
+        select * from t_kmsj ;
+    </select>
+    <select id="selectById" parameterType="Long" resultType="com.tonny.kaoshi.entity.KmShijuan">
+            select * from t_kmsj where id =#{id}
+    </select>
+    <select id="selectByRid" parameterType="Long" resultType="com.tonny.kaoshi.entity.KmShijuan">
+        select * from t_kmsj where kmid =#{kmid}
+    </select>
+
+    <insert id="insertShiJ" parameterType="com.tonny.kaoshi.entity.KmShijuan" >
+        insert into t_kmsj(id,kmid,kmsj,sjzz,sjdesc,sjdate,sjhref,sjsort)
+        values(#{id},#{kmid},#{kmsj},#{sjzz},#{sjdesc},#{sjdate},#{sjhref},#{sjsort})
+    </insert>
+    <update id ="updateShiJ" parameterType="com.tonny.kaoshi.entity.KmShijuan">
+        update t_kmsj set kmsj=#{kmsj},sjzz=#{sjzz},sjdesc=#{sjdesc},sjhref=#{sjhref} where id=#{id}
+    </update>
+    <delete id="deleteShiJ" parameterType="Long">
+        delete from t_kmsj where id=#{id}
+    </delete>
+
+</mapper>

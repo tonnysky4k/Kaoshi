@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html class=" js csstransforms3d"><head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>试卷清单</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/page.css">
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/modernizr.js"></script>
+</head>
+
+<body style="background: #f6f5fa;">
+
+<div class="super-content">
+    <div class="superCtab">
+        <div class="ctab-title clearfix"><h3>试卷管理</h3></div>
+        <div class="ctab-Main">
+            <div class="ctab-Main-title">
+                <ul class="clearfix" >
+                    <li th:each="km,sa:${kms}" th:class="${km.id}==${kmid}?'cur'" ><a href="javascript:;" th:onclick="'f_kmsj('+${km.id}+')'" th:text="${km.rzkm}">TCA架构师认证题</a></li>
+                </ul>
+            </div>
+            <div class="ctab-Mian-cont">
+                <div class="Mian-cont-btn Mian-cont-btn2 clearfix">
+                    <div class="operateBtn">
+                        <a href="javascript:;" onclick="f_new()" class="greenbtn add">添加试卷</a>
+                    </div>
+                    <div class="searchBar">
+                        <input type="text" id="" value="" class="form-control srhTxt" placeholder="输入子站关键字搜索">
+                        <input type="button" class="srhBtn" value="">
+                    </div>
+                    <div hidden> <span id="sjzz" th:text="${session.user.pho}">tonny</span></div>
+                    <div hidden> <span id="kmid" th:text="${kmid}">kmid</span></div>
+                    <div hidden> <span id="rzid" th:text="${rzid}">rzid</span></div>
+                </div>
+                <div class="Mian-cont-wrap">
+                    <div class="defaultTab-T">
+                        <table border="0" cellspacing="0" cellpadding="0" class="defaultTable">
+                            <tbody><tr>
+                                <th class="t_1">试卷ID</th>
+                                <th class="t_2">试卷名称</th>
+                                <th class="t_3">试卷描述</th>
+                                <th class="t_4">试卷链接</th>
+                                <th class="t_5">操作</th>
+                            </tr>
+                            </tbody></table>
+                    </div>
+                    <table id="mytab" border="0" cellspacing="0" cellpadding="0" class="defaultTable defaultTable2">
+                        <tbody th:each="shj:${shijs}">
+                        <tr class="wd">
+                            <td class="t_1" th:text="${shj.id}">2015001</td>
+                            <td class="t_2"><a class="team-a" th:text="${shj.kmsj}"  th:href="@{/queryKaot(sid=${shj.id})}" >张三个人官网</a></td>
+                            <td class="t_3"><a class="team-a" th:text="${shj.sjdesc}" th:href="@{/queryKaot(sid=${shj.id})}">导出数据</a></td>
+                            <td class="t_4" th:text="${shj.sjhref}">试卷链接</td>
+                            <td class="t_5">
+                                <div class="btn">
+                                    <a class="Top" href="javascript:;" onclick="f_chakan(this)">查看</a>
+                                    <a class="modify" href="javascript:;" onclick="f_chakan(this)">修改</a>
+                                    <a class="delete" href="javascript:;" onclick="f_remove(this)">删除</a>
+                                </div></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--main-->
+</div>
+<div class="addRenZbox layuiBox">
+    <div class="layer-title clearfix"><h2>添加试卷</h2><span class="layerClose"></span></div>
+    <div class="layer-content">
+        <div hidden ><span id="sid">00</span></div>
+        <div class="aRenz clearfix"><span>试卷名称：</span><textarea id="kmsj"></textarea></div>
+        <div class="aRenz clearfix"><span>试卷描述：</span><textarea id="sjdesc"></textarea></div>
+        <div class="aRenz clearfix"><span>试卷链接：</span><textarea id="sjhref"></textarea></div>
+        <div class="aRenz clearfix">
+            <input type="button" value="新增" onclick="f_run()" class="saveBtn">
+        </div>
+    </div>
+</div>
+<script>
+    function f_kmsj(id)
+    {
+        document.getElementById("kmid").innerHTML=id;
+         $.ajax({
+                url:"/findShiJ",
+                type:"post",
+                data:{id:id},
+                dataType:"json",
+                success:function(data){
+                var sj=data;
+                var tab = document.getElementById("mytab");
+                $(".defaultTable2 tbody").html("");
+                for(var i =0;i<sj.length;i++)
+                {
+                    var nRow =tab.insertRow(tab.rows.length);
+                    nRow.className="wd";
+                    var nId = nRow.insertCell(0);
+                    nId.className="t_1";
+                    nId.innerHTML=sj[i].id;
+
+                    var nSj=nRow.insertCell(1);
+                    nSj.className="t_2";
+                    nSj.innerHTML="<a class='team-a' href='/queryKaot?sid="+sj[i].id+"'>"+sj[i].kmsj+"</a>";
+                    var nDe=nRow.insertCell(2);
+                    nDe.className="t_3";
+                    nDe.innerHTML="<a class='team-a' href='/queryKaot?sid="+sj[i].id+"'>"+sj[i].sjdesc+"</a>";
+
+                    var nLi=nRow.insertCell(3);
+                    nLi.className="t_4";
+                    nLi.innerHTML=sj[i].sjhref;
+
+                    var nBtn=nRow.insertCell(4);
+                    nBtn.className="t_5";
+                    nBtn.innerHTML='<div class="btn"><a class="Top" href="javascript:;" onclick="f_chakan(this)">查看</a><a class="modify" href="javascript:;" onclick="f_chakan(this)">修改</a><a class="delete" href="javascript:;" onclick="f_remove(this)">删除</a></div>';
+                }
+                }
+            });
+    }
+    function f_insert()
+    {
+        var sid =document.getElementById("sid").innerHTML;
+        var rzid = document.getElementById("rzid").innerHTML;
+        var kmsj =document.getElementById('kmsj').value;
+        var sjdesc=document.getElementById('sjdesc').value;
+        var sjhref=document.getElementById('sjhref').value;
+        var kmid =document.getElementById("kmid").innerHTML;
+        var sjzz =document.getElementById("sjzz").innerHTML;
+        $.ajax({
+            url:"/insertShiJ",
+            type:"post",
+            data:{id:sid,kmid:kmid,kmsj:kmsj,sjdesc:sjdesc,sjhref:sjhref,sjzz:sjzz},
+            dataType:"json",
+            success:function(data){
+             window.location='/main?rid='+rzid+'&& kid='+kmid;
+            }
+        });
+    }
+     function f_run()
+     {
+        var btns = document.getElementsByClassName("saveBtn");
+        if(btns[0].value=='新增')
+            f_insert();
+        if(btns[0].value=='修改')
+            f_update();
+     }
+    function f_new()
+    {
+        document.getElementById("sid").innerHTML='0';
+        document.getElementById("kmsj").value='';
+        document.getElementById("sjdesc").value='';
+        document.getElementById("sjhref").value='';
+        var btns = document.getElementsByClassName("saveBtn");
+        btns[0].value='新增';
+        f_show();
+    }
+    function f_update()
+    {
+        var sid  =document.getElementById('sid').innerHTML;
+        var rzid = document.getElementById("rzid").innerHTML;
+        var kmsj =document.getElementById('kmsj').value;
+        var sjdesc=document.getElementById('sjdesc').value;
+        var sjhref=document.getElementById('sjhref').value;
+        var kmid =document.getElementById("kmid").innerHTML;
+        var sjzz =document.getElementById("sjzz").innerHTML;
+        var kmid =document.getElementById("kmid").innerHTML;
+         $.ajax({
+                url:"/updateShiJ",
+                type:"post",
+                data:{id:sid,kmsj:kmsj,sjdesc:sjdesc,sjhref:sjhref,sjzz:sjzz},
+                dataType:"json",
+                success:function(data){
+                window.location='/main?rid='+rzid+'&&kid='+kmid;
+                }
+            });
+    }
+    function f_chakan(obj)
+    {
+        var tr=obj.parentNode.parentNode.parentNode;
+        var sid =tr.getElementsByClassName('t_1')[0].innerHTML;
+        var kmsj =tr.getElementsByTagName("a")[0].innerHTML;
+        var sjdesc=tr.getElementsByTagName("a")[1].innerHTML;
+        var sjhref=tr.getElementsByClassName('t_4')[0].innerHTML;
+
+        document.getElementById("sid").innerHTML=sid;
+        document.getElementById("kmsj").value=kmsj;
+        document.getElementById("sjdesc").value=sjdesc;
+        document.getElementById("sjhref").value=sjhref;
+
+        var btns = document.getElementsByClassName("saveBtn");
+        var bname =obj.innerHTML;
+        if(bname =='查看')
+            btns[0].value='关闭';
+        if(bname =='修改')
+            btns[0].value='修改';
+        f_show();
+
+    }
+    function f_remove(obj)
+    {
+        var tr=obj.parentNode.parentNode.parentNode;
+        var id =tr.getElementsByClassName('t_1')[0].innerHTML;
+        tr.remove();
+        if(id !='0')
+        {
+            $.ajax({
+                url:"/deleteShiJ",
+                type:"post",
+                data:{id:id},
+                dataType:"json",
+                success:function(data){}
+            });
+        }
+    }
+    function f_show()
+    {
+        $(".layuiBg").css({
+			display:"block",height:$(document).height()
+		});
+		$(".addRenZbox").css({
+			left:($("body").width()-$(".addRenZbox").width())/2-20+"px",
+			top:($(window).height()-$(".addRenZbox").height())/2+$(window).scrollTop()+"px",
+			display:"block"
+		});
+    }
+    $('.ctab-Main-title li').click(function(){
+        $(this).addClass('cur').siblings().removeClass('cur');
+    });
+
+</script>
+<!--content E-->
+</body></html>

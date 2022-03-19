@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tonny.kaoshi.mapper.KaotMapper">
+    <resultMap id="kaot" type="com.tonny.kaoshi.entity.Kaot">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="t_pro" property="t_pro" jdbcType="VARCHAR"/>
+        <result column="t_type" property="t_type" jdbcType="VARCHAR"/>
+        <result column="t_desc" property="t_desc" jdbcType="VARCHAR"/>
+        <result column="t_zhan" property="t_zhan" jdbcType="VARCHAR"/>
+        <result column="t_you" property="t_you" jdbcType="VARCHAR"/>
+        <result column="sid" property="sid" jdbcType="INTEGER"/>
+    </resultMap>
+    <select id="selectAll" resultType="com.tonny.kaoshi.entity.Kaot">
+        select * from t_kaot ;
+    </select>
+    <select id="selectById" parameterType="Long" resultType="com.tonny.kaoshi.entity.Kaot">
+        select * from t_kaot where id =#{id};
+    </select>
+    <select id="selectBySid" parameterType="Long" resultType="com.tonny.kaoshi.entity.Kaot">
+        select * from t_kaot where sid =#{sid};
+    </select>
+    <select id ="selectByName" parameterType="com.tonny.kaoshi.entity.Kaot" resultType="com.tonny.kaoshi.entity.Kaot">
+            select * from t_kaot where sid =#{sid} and t_pro like "%"#{t_pro}"%"
+    </select>
+    <select id="selectMaxId" resultType="Long">
+        select max(id) from t_kaot;
+    </select>
+    <insert id="insertKm" parameterType="com.tonny.kaoshi.entity.Kaot" >
+        insert into t_kaot(id,t_pro,t_type,t_desc,t_zhan,t_you,sid)
+        values(#{id},#{t_pro},#{t_type},#{t_desc},#{t_zhan},#{t_you},#{sid})
+    </insert>
+    <update id ="updateKm" parameterType="com.tonny.kaoshi.entity.Kaot">
+        update t_kaot set t_pro=#{t_pro},t_type=#{t_type},t_desc=#{t_desc},
+        t_zhan=#{t_zhan},t_you=#{t_you} where id=#{id}
+    </update>
+    <delete id="deleteKm" parameterType="Long">
+        delete from t_kaot where id=#{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tonny.kaoshi.mapper.RenZMapper">
+
+    <select id="selectAll" resultType="com.tonny.kaoshi.entity.RenZheng">
+        select * from t_rz ;
+    </select>
+    <select id="selectById" parameterType="Long" resultType="com.tonny.kaoshi.entity.RenZheng">
+            select * from t_rz where id =#{id}
+    </select>
+    <insert id="insertRenz" parameterType="com.tonny.kaoshi.entity.RenZheng" >
+        insert into t_rz(id,rz_name,rzdesc,rzhref)
+        values(#{id},#{rz_name},#{rzdesc},#{rzhref})
+    </insert>
+    <update id ="updateRenz" parameterType="com.tonny.kaoshi.entity.RenZheng">
+        update t_rz set rz_name=#{rz_name},rzdesc=#{rzdesc},rzhref=#{rzhref} where id=#{id}
+    </update>
+    <delete id="deleteRenz" parameterType="Long">
+        delete from t_rz where id=#{id}
+    </delete>
+
+</mapper>

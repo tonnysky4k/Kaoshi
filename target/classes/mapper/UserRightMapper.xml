@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tonny.kaoshi.mapper.UserRightMapper">
+    <resultMap id="userType" type="com.tonny.kaoshi.entity.UserRight">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="uid" property="uid" jdbcType="INTEGER"/>
+        <result column="rzid" property="rzid" jdbcType="INTEGER"/>
+        <result column="kmid" property="kmid" jdbcType="INTEGER"/>
+        <result column="outDate" property="outDate" jdbcType="DATE"/>
+
+    </resultMap>
+    <select id="selectAll" resultType="com.tonny.kaoshi.entity.UserRight">
+        select * from t_user_right ;
+    </select>
+    <select id="selectByUid" parameterType="Long" resultType="com.tonny.kaoshi.entity.UserRight">
+            select * from t_user_right where uid =#{uid}
+    </select>
+    <insert id="insertUserRight" parameterType="com.tonny.kaoshi.entity.UserRight" >
+        insert into t_user_right(id,uid,rzid,kmid,outDate)
+        values(#{id},#{uid},#{rzid},#{kmid},#{outdate})
+    </insert>
+    <update id ="updateUserRight" parameterType="com.tonny.kaoshi.entity.UserRight">
+        update t_user_right set rzid=#{rzid} ,kmid=#{kmid} where id=#{id}
+    </update>
+
+    <delete id="deleteUserRight" parameterType="Long">
+        delete from t_user_right where id=#{id}
+    </delete>
+
+</mapper>

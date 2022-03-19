@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html class=" js csstransforms3d"><head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>用户管理</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/page.css">
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/modernizr.js"></script>
+</head>
+
+<body style="background: #f6f5fa;">
+
+<div class="super-content">
+    <div class="superCtab">
+        <div class="ctab-title clearfix"><h3>用户权限</h3><a href="javascript:;" class="sp-column"><i class="ico-export"></i>导出列表</a></div>
+        <div class="ctab-Main">
+            <div class="ctab-Mian-cont">
+                <div class="Mian-cont-btn Mian-cont-btn2 clearfix">
+                    <div class="operateBtn">
+                        <a href="javascript:;" onclick="f_new()" class="greenbtn add">添加权限</a>
+                        <a href="/user" class="greenbtn add">返回用户清单</a>
+                    </div>
+                    <div class="searchBar">
+                        <input type="text" id="" value="" class="form-control srhTxt" placeholder="输入子站关键字搜索">
+                        <input type="button" class="srhBtn" value="">
+                    </div>
+                </div>
+                <div hidden> <span id="uid" th:text="${uid}">0</span></div>
+                <div class="Mian-cont-wrap">
+                    <div class="defaultTab-T">
+                        <table border="0" cellspacing="0" cellpadding="0" class="defaultTable">
+                            <tbody><tr>
+                                <th class="t_1">用户ID</th>
+                                <th class="t_2">用户名</th>
+                                <th class="t_3">认证权限</th>
+                                <th class="t_4">科目权限</th>
+                                <th class="t_5">操作</th>
+                            </tr>
+                            </tbody></table>
+                    </div>
+                    <table border="0" cellspacing="0" cellpadding="0" class="defaultTable defaultTable2">
+                        <tbody>
+                        <tr class="wd" th:each="ur:${urs}">
+                            <td class="t_1" th:text="${ur.id}">2015001</td>
+                            <td calss="t_2" th:text="${ur.uname}">2015001</td>
+                            <td class="t_3" th:text="${ur.rname}">用户名 </td>
+                            <td class="t_4" th:text="${ur.kname}">认证权限</td>
+                            <td class="t_5"><div class="btn">
+                                <a href="javascript:;" onclick="f_delete(this)" class="delete">删除</a>
+                            </div>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--main-->
+</div>
+<div class="addRenZbox layuiBox">
+    <div class="layer-title clearfix"><h2>添加用户权限</h2><span class="layerClose"></span></div>
+    <div class="layer-content">
+        <div hidden ><span id="rid">00</span></div>
+        <div class="aRenz clearfix"><span>认证名称：</span><select id="findRZ" onchange="f_change()" style="height:46px;" ></select></div>
+        <div class="aRenz clearfix"><span>认证描述：</span><select id="findKM" style="height:46px;data-width:200px;"></select></div>
+        <div class="aRenz clearfix">
+            <input type="button" value="新增" onclick="f_insert()" class="saveBtn">
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    function f_new()
+    {
+        $.ajax({
+            url:"/getRZ",
+            type:"get",
+            dataType:"json",
+            success:function(data){
+             var rzs =data;
+             var ops="";
+             document.getElementById("findRZ").innerHTML='';
+             for(var i =0;i<rzs.length;i++)
+             {
+                 ops +="<option value="+rzs[i].id+">"+rzs[i].rz_name+"</option>";
+               }
+             $("#findRZ").append(ops);
+            }
+        });
+        f_show();
+    }
+    function f_show()
+    {
+        $(".layuiBg").css({
+			display:"block",height:$(document).height()
+		});
+		$(".addRenZbox").css({
+			left:($("body").width()-$(".addRenZbox").width())/2-20+"px",
+			top:($(window).height()-$(".addRenZbox").height())/2+$(window).scrollTop()+"px",
+			display:"block"
+		});
+    }
+
+    function f_change()
+    {
+        var rz =document.getElementById("findRZ");
+        var index =rz.selectedIndex;
+        var rid =rz.options[index].value;
+        $.ajax({
+            url:"/getKM",
+            type:"get",
+            data:{rid:rid},
+            dataType:"json",
+            success:function(data){
+             var kms =data;
+             ops="";
+             document.getElementById("findKM").innerHTML='';
+             for(var i =0;i<kms.length;i++)
+             {
+                ops +="<option value="+kms[i].id+">"+kms[i].rzkm+"</option>";
+             }
+             $("#findKM").append(ops);
+            }
+        });
+    }
+
+    function f_insert()
+    {
+        var rz =document.getElementById("findRZ");
+        var index =rz.selectedIndex;
+        var rid =rz.options[index].value;
+
+        var km=document.getElementById("findKM");
+        var ind =km.selectedIndex;
+        var kid =km.options[ind].value;
+
+        var uid =document.getElementById("uid").innerHTML;
+
+        $.ajax({
+        url:"/insertUserRight",
+        type:"post",
+        data:{id:0,uid:uid,rzid:rid,kmid:kid},
+        dataType:"json",
+        success:function(){
+        window.location="/userRight?uid="+uid;
+        }
+        });
+    }
+
+    function f_delete(obj)
+    {
+        var tr = obj.parentNode.parentNode.parentNode;
+        var id = tr.getElementsByClassName("t_1")[0].innerHTML;
+        var uid =document.getElementById("uid").innerHTML;
+        tr.remove();
+        $.ajax({
+            url:"/deleteUserRight",
+            type:"post",
+            data:{id:id},
+            dataType:"json",
+            success:function(data){window.location="/userRight?uid="+uid;}
+        });
+    }
+</script>
+<!--content E-->
+</body></html>

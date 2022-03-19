@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tonny.kaoshi.mapper.RenKMMapper">
+
+    <select id="selectAll" resultType="com.tonny.kaoshi.entity.RenzKm">
+        select * from t_rzkm ;
+    </select>
+    <select id="selectById" parameterType="Long" resultType="com.tonny.kaoshi.entity.RenzKm">
+            select * from t_rzkm where id =#{id}
+    </select>
+    <select id="selectByRid" parameterType="Long" resultType="com.tonny.kaoshi.entity.RenzKm">
+        select * from t_rzkm where rid =#{rid}
+    </select>
+    <insert id="insertRenKM" parameterType="com.tonny.kaoshi.entity.RenzKm" >
+        insert into t_rzkm(id,rid,rzkm,rzdesc,khref)
+        values(#{id},#{rid},#{rzkm},#{rzdesc},#{khref})
+    </insert>
+    <update id ="updateRenKM" parameterType="com.tonny.kaoshi.entity.RenzKm">
+        update t_rzkm set rzkm=#{rzkm},rzdesc=#{rzdesc},khref=#{khref} where id=#{id}
+    </update>
+    <delete id="deleteRenKM" parameterType="Long">
+        delete from t_rzkm where id=#{id}
+    </delete>
+
+</mapper>

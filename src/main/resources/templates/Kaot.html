@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html class=" js csstransforms3d"><head>
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>文章发布</title>
+	<link rel="stylesheet" href="css/base.css">
+	<link rel="stylesheet" href="css/page.css">
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/main.js"></script>
+	<script type="text/javascript" src="js/modernizr.js"></script>
+</head>
+<script>
+
+</script>
+<body style="background: #f6f5fa;">
+
+	<!--content S-->
+	<div class="super-content RightMain" id="RightMain">
+		<div class="superCtab">
+			<div class="ctab-title clearfix"><h3 th:text="${shij}">腾讯云认证</h3></div>
+			<div class="ctab-Main">
+				<div hidden><span id="sid" th:text="${sid}">00</span></div>
+				<div hidden><span id="kmid" th:text="${kmid}">00</span></div>
+				<div hidden><span id="rzid" th:text="${rzid}">00</span></div>
+				<div class="ctab-Mian-cont">
+					<div class="Mian-cont-btn clearfix">
+						<div class="operateBtn">
+							<a href="javascript:;" onclick="f_new()" class="greenbtn add sp-add">添加考题</a>
+							<a href="javascript:;" class="greenbtn kaogz sp-kaogz">考试规则</a>
+							<a th:href="@{main(rid=${rzid},kid=${kmid})}" class="greenbtn sjbtn">返回试卷</a>
+						</div>
+						<div class="searchBar">
+							<input type="text" id="searchId" value="" class="form-control srhTxt" placeholder="输入标题关键字搜索">
+							<input type="button" class="srhBtn" onclick="f_search()" value="">
+						</div>
+					</div>
+					<div class="super-label clearfix">
+						<a href="#">最新动态<em style="display: none;"></em></a><a href="#">资料下载<em style="display: none;"></em></a>
+					</div>
+					<div class="Mian-cont-wrap">
+						<div class="defaultTab-T">
+							<table border="0" cellspacing="0" cellpadding="0" class="defaultTable">
+								<tbody><tr><th class="t_1">考题ID</th><th class="t_2">考题描述</th><th class="t_3">单选（多选）</th><th class="t_4">操作</th></tr>
+							</tbody></table>
+						</div>
+						<table id ="mytab" border="0" cellspacing="0" cellpadding="0" class="defaultTable defaultTable2" th:each="kt:${kts}">
+							<tbody><tr>
+								<td class="t_1" th:text="${kt.id}">20150084</td>
+								<td class="t_2"><a href="#" th:text="${kt.t_pro}">平安好医生与平安银行开启全面战略合作</a></td>
+								<td class="t_3" th:if="${kt.t_type eq 'single'}">单选题</td>
+								<td class="t_3" th:if="${kt.t_type ne 'single' }"style="color:blue;">多选题</td>
+								<td class="t_4">
+									<div class="btn">
+									<a href="javascript:;" onclick="f_chakan(this)" class="Top sp-add">查看</a>
+									<a href="javascript:;" onclick="f_xiugai(this)"class="modify sp-add" >修改</a>
+									<a href="javascript:;" onclick="f_del(this)" class="delete">删除</a>
+									</div>
+								</td>
+							</tr>
+						</tbody></table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="layuiBg"></div><!--公共遮罩-->
+	<!--点击修改弹出层-->
+	<div class="ksGzbox layuiBox">
+		<div class="layer-title clearfix"><h2>腾讯云TCA考试说明</h2><span class="layerClose"></span></div>
+		<div class="layer-content">
+			<div class="aKsgz clearfix"><span>考生须知:腾讯云考试每月报考一次，每次考试在月底最后一个周六
+			，考试题60道单选，20道多选，考试时长90分钟，考试通过分数70分。祝您好运！</span></div>
+			<div class="aKsgz clearfix"><input type="button" value="关闭" class="saveBtn"></div>
+		</div>
+	</div>
+	<!--点击添加分类弹出-->
+	<div class="addFeileibox layuiBox">
+		<div class="layer-title clearfix"><h2>添加腾讯云TCA考题</h2><span class="layerClose"></span></div>
+		<div class="layer-content">
+			<div hidden ><span id="kid">00</span></div>
+			<div class="aFllink clearfix"><span>考试题：</span><textarea id="tm"></textarea></div>
+			<div class="aFllink clearfix"><span>答案A：</span><textarea id="an1"></textarea></div>
+			<div class="aFllink clearfix"><span>答案B：</span><textarea id="an2"></textarea></div>
+			<div class="aFllink clearfix"><span>答案C：</span><textarea id="an3"></textarea></div>
+			<div class="aFllink clearfix"><span>答案D：</span><textarea id="an4"></textarea></div>
+			<div class="aFllink clearfix">
+				<input type="radio" id="rd1" name="myradio">单选题1分
+				<input type="radio" id="rd2" name="myradio" value="多选">多选题2分
+			</div>
+			<div class="aFllink clearfix"><span>答案：</span>
+				<input type="text" value="" id="zhan">
+				<input type="button" value="新增" onclick="f_run()" class="saveBtn">
+			</div>
+		</div>
+	</div>
+	<script language="JavaScript">
+
+    function f_insertKaot()
+    {
+      var xx =document.getElementsByName("myradio");
+	  var sid =document.getElementById('sid').innerHTML;
+	  var id = $("#kid").val();
+	  var pro =$("#tm").val();
+	  var an1=$("#an1").val();
+	  var an2=$("#an2").val();
+	  var an3=$("#an3").val();
+	  var an4=$("#an4").val();
+	  var zhan =$("#zhan").val();
+      var xs ="single";
+      if(xx[1].checked)
+         xs ="multi";
+        $.ajax({
+            url:"/insertKaot",
+            type:"post",
+            data: {id:id,tts:pro,an1:an1,an2:an2,an3:an3,an4:an4,typ:xs,zhan:zhan,sid:sid},
+            dataType:"json",
+            success:function(data){window.location="/queryKaot?sid="+sid;}
+            });
+    }
+    function f_updateKaot()
+    {
+      var xx =document.getElementsByName("myradio");
+	  var sid =document.getElementById('sid').innerHTML;
+	  var id = $("#kid").val();
+	  var pro =$("#tm").val();
+	  var an1=$("#an1").val();
+	  var an2=$("#an2").val();
+	  var an3=$("#an3").val();
+	  var an4=$("#an4").val();
+	  var zhan =$("#zhan").val();
+      var xs ="single";
+      if(xx[1].checked)
+         xs ="multi";
+        $.ajax({
+            url:"/updateKaot",
+            type:"post",
+            data:{id:id,tts:pro,an1:an1,an2:an2,an3:an3,an4:an4,typ:xs,zhan:zhan,sid:sid},
+            dataType:"json",
+            success:function(data){window.location="/queryKaot?sid="+sid;}
+            });
+    }
+    function f_queryKt(obj)
+	{
+		var trobj = obj.parentNode.parentNode.parentNode;
+		var tdobj= trobj.getElementsByClassName("t_1");
+		var id =tdobj[0].innerHTML;
+		var rds =document.getElementsByName("myradio");
+		$.ajax({
+			url:"/queryKm",
+            type:"post",
+            data: {id:id},
+            dataType:"json",
+            success:function(data){
+                var km=data;
+                $('#kid').val(km.id);
+                $('#tm').val(km.tts);
+                $('#an1').val(km.an1);
+                $('#an2').val(km.an2);
+                $('#an3').val(km.an3);
+                $('#an4').val(km.an4);
+                $('#zhan').val(km.zhan);
+                $('#sid').val(km.sid);
+                if(km.typ == 'single')
+                  rds[0].checked=true;
+                 else
+				  rds[1].checked=true;
+            }
+		});
+
+	}
+	function f_del(obj)
+	{
+		var tr =obj.parentNode.parentNode.parentNode;
+		var id =tr.getElementsByClassName('t_1')[0].innerHTML;
+		tr.remove();
+		$.ajax({
+			url:"/delKaot",
+            type:"post",
+            data:{id:id},
+            dataType:"json",
+            success:function(data){}
+		});
+	}
+	function f_new()
+	{
+		btns = document.getElementsByClassName("saveBtn");
+        btns[1].value="新增";
+        document.getElementById("tm").value="";
+        document.getElementById("zhan").value="";
+        document.getElementById("an1").value="";
+        document.getElementById("an2").value="";
+        document.getElementById("an3").value="";
+        document.getElementById("an4").value="";
+        var rds =document.getElementsByName("myradio");
+        rds[0].checked=false;
+        rds[1].checked=false;
+
+	}
+	function f_chakan(obj)
+	{
+		btns = document.getElementsByClassName("saveBtn");
+        btns[1].value="关闭";
+        f_queryKt(obj);
+        f_showBox();
+	}
+	function f_xiugai(obj)
+	{
+		btns = document.getElementsByClassName("saveBtn");
+        btns[1].value="修改";
+        f_queryKt(obj);
+        f_showBox();
+	}
+	function f_run()
+	{
+		var saBtn =document.getElementsByClassName("saveBtn");
+		if(saBtn[1].value =='新增')
+		{
+			f_insertKaot();
+		}
+		if(saBtn[1].value =='修改')
+		{
+			f_updateKaot();
+		}
+	}
+	function f_search()
+	{
+		var text =document.getElementById("searchId").value;
+		var sid =document.getElementById("sid").innerHTML;
+		$.ajax({
+			url:"/searchKt",
+            type:"post",
+            data: {sid:sid,title:text},
+            dataType:"json",
+            success:function(data){
+            var kat =data;
+            $(".defaultTable2 tbody").html("");
+            var tab = document.getElementById("mytab");
+
+            for(var i =0;i<kat.length;i++)
+            {
+				var newRow= tab.insertRow(tab.rows.length);
+				var newSid = newRow.insertCell(0);
+				newSid.style.visibility="hidden";
+				newSid.innerHTML=kat[i].sid;
+
+				var newId =newRow.insertCell(0);
+				newId.innerHTML=kat[i].id;
+				newId.className="t_1";
+				var newT =newRow.insertCell(1);
+				newT.innerHTML="<a href='#'>"+kat[i].t_pro+"</a>";
+				newT.className="t_2";
+				var newS= newRow.insertCell(2);
+				if(kat[i].t_type=='single')
+				{
+					newS.innerHTML='单选题';
+				}
+				else
+				{
+					newS.innerHTML="多选题";
+					newS.style='color:blue';
+					}
+					newS.className="t_3";
+				var newBtn = newRow.insertCell(3);
+				newBtn.innerHTML="<div class='btn'><a href='javascript:;' onclick='f_chakan(this)' class='Top sp-add'>查看</a><a href='javascript:;' onclick='f_xiugai(this)'class='modify sp-add'>修改</a><a href='javascript:;' onclick='f_del(this)' class='delete'>删除</a></div>";
+            	newBtn.clasName="t_4";
+            }
+            }
+		});
+	}
+
+	function f_showBox()
+	{
+		$(".layuiBg").css({
+			display:"block",height:$(document).height()
+		});
+		$(".addFeileibox").css({
+			left:($("body").width()-$(".addFeileibox").width())/2-20+"px",
+			top:($(window).height()-$(".addFeileibox").height())/2+$(window).scrollTop()+"px",
+			display:"block"
+		});
+	}
+	</script>
+</body>
+</html>

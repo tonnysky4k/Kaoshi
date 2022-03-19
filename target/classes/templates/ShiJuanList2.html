@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html class=" js csstransforms3d"><head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>试卷清单</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/page.css">
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/modernizr.js"></script>
+</head>
+
+<body style="background: #f6f5fa;">
+
+<div class="super-content">
+    <div class="superCtab">
+        <div class="ctab-title clearfix"><h3>试卷清单</h3><a href="javascript:;" class="sp-column"><i class="ico-export"></i>导出列表</a></div>
+        <div class="ctab-Main">
+            <div class="ctab-Main-title">
+                <ul class="clearfix" >
+                    <li th:each="km,sa:${kms}" th:class="${sa.index}==0?'cur'" ><a href="javascript:;" th:onclick="'f_kmsj('+${km.id}+')'" th:text="${km.rzkm}">TCA架构师认证题</a></li>
+                </ul>
+            </div>
+            <div class="ctab-Mian-cont">
+                <div class="Mian-cont-btn Mian-cont-btn2 clearfix">
+                    <div hidden> <span id="sjzz" th:text="${session.user.pho}">tonny</span></div>
+                    <div hidden> <span id="kmid" th:text="${kmid}">kmid</span></div>
+                    <div hidden> <span id="rzid" th:text="${rzid}">rzid</span></div>
+                </div>
+                <div class="Mian-cont-wrap">
+                    <div class="defaultTab-T">
+                        <table border="0" cellspacing="0" cellpadding="0" class="defaultTable">
+                            <tbody><tr>
+                                <th class="t_1">试卷ID</th>
+                                <th class="t_2">试卷名称</th>
+                                <th class="t_3">试卷描述</th>
+                                <th class="t_4">试卷链接</th>
+                                <th class="t_5">操作</th>
+                            </tr>
+                            </tbody></table>
+                    </div>
+                    <table id="mytab" border="0" cellspacing="0" cellpadding="0" class="defaultTable defaultTable2">
+                        <tbody th:each="shj:${shijs}">
+                        <tr class="wd">
+                            <td class="t_1" th:text="${shj.id}">2015001</td>
+                            <td class="t_2"><a class="team-a" th:text="${shj.kmsj}"   >张三个人官网</a></td>
+                            <td class="t_3"><a class="team-a" th:text="${shj.sjdesc}">导出数据</a></td>
+                            <td class="t_4" th:text="${shj.sjhref}">试卷链接</td>
+                            <td class="t_5">
+                                <div class="btn">
+                                    <a class="Top" th:href="@{/queryShjKaot(sid=${shj.id})}">进入考试</a>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--main-->
+</div>
+<script>
+    function f_kmsj(id)
+    {
+        document.getElementById("kmid").innerHTML=id;
+         $.ajax({
+                url:"/findShiJ",
+                type:"post",
+                data:{id:id},
+                dataType:"json",
+                success:function(data){
+                var sj=data;
+                var tab = document.getElementById("mytab");
+                $(".defaultTable2 tbody").html("");
+                for(var i =0;i<sj.length;i++)
+                {
+                    var nRow =tab.insertRow(tab.rows.length);
+                    nRow.className="wd";
+                    var nId = nRow.insertCell(0);
+                    nId.className="t_1";
+                    nId.innerHTML=sj[i].id;
+
+                    var nSj=nRow.insertCell(1);
+                    nSj.className="t_2";
+                    nSj.innerHTML="<a class='team-a'>"+sj[i].kmsj+"</a>";
+                    var nDe=nRow.insertCell(2);
+                    nDe.className="t_3";
+                    nDe.innerHTML="<a class='team-a'>"+sj[i].sjdesc+"</a>";
+
+                    var nLi=nRow.insertCell(3);
+                    nLi.className="t_4";
+                    nLi.innerHTML=sj[i].sjhref;
+
+                    var nBtn=nRow.insertCell(4);
+                    nBtn.className="t_5";
+                    nBtn.innerHTML='<div class="btn"><a class="Top" href="/queryShjKaot?sid='+sj[i].id+'">进入考试</a></div>';
+                }
+                }
+            });
+    }
+
+     $('.ctab-Main-title li').click(function(){
+        $(this).addClass('cur').siblings().removeClass('cur');
+    });
+</script>
+<!--content E-->
+</body></html>

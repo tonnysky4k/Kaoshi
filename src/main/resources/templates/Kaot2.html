@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <title>腾讯云TCA</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/page.css">
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/modernizr.js"></script>
+</head>
+<script language="JavaScript">
+        function f_commit()
+        {
+            var ans =document.getElementsByName("question");
+            var ids =[];
+            var fs_t =0;
+            for(var i =0 ;i<ans.length;i++)
+            {
+                var ques =ans[i];
+                var id =ques.id;
+                id=id.substring(5);
+                var fs =0;
+                var robj =ques.getElementsByClassName("radio_1");
+                var cobj =ques.getElementsByClassName("chk_1");
+                var zhan =ques.getElementsByClassName("zqda")[0].innerHTML;
+                var das='';
+                if(robj.length>0)
+                {
+                    fs =1;
+                     for(var j =0 ;j<robj.length;j++)
+                    {
+                    if(j==0 && robj[j].checked)
+                        das ='A';
+                    if(j==1 && robj[j].checked)
+                        das ='B';
+                    if(j==2 && robj[j].checked)
+                        das ='C';
+                    if(j==3 && robj[j].checked)
+                        das ='D';
+                    }
+                }
+                if(cobj.length>0)
+                {
+                    fs =2;
+                    for(var j =0;j<cobj.length;j++)
+                    {
+                    if(j==0 && cobj[j].checked)
+                        das+='A';
+                    if(j==1 && cobj[j].checked)
+                        das+='B';
+                    if(j==2 && cobj[j].checked)
+                        das+='C';
+                    if(j==3 && cobj[j].checked)
+                        das+='D';
+                    }
+                }
+                ques.getElementsByClassName("yda")[0].innerHTML=das;
+                if (zhan != das)
+                  fs =0;
+                fs_t =fs_t +fs ;
+                var exa = new Object();
+                exa.id= 0;
+                exa.kid= id;
+                exa.das =das;
+                exa.kname='';
+                exa.def =fs;
+                exa.zqda =zhan;
+                ids.push(exa);
+            }
+            $(".ksjg i").html(fs_t);
+            $(".zhan").css({display:"block"});
+            $(".ksjg").css({display:"block"});
+            $(".chak").html("关闭查看");
+            $.ajax({
+            url:'/saveKaos',
+            type:'post',
+            contentType:'application/json;charset=utf-8',
+            data:JSON.stringify(ids),
+            success:function(data){
+                $(".submit").css({display:"none"});
+            }
+            });
+
+        }
+      function f_showDa(obj)
+      {
+        var text =obj.innerHTML;
+        if(text =="查看答案")
+        {
+          $(".zhan").css({display:"block"});
+          obj.innerHTML="关闭查看";
+          }else
+          {
+           $(".zhan").css({display:"none"});
+           obj.innerHTML="查看答案";
+          }
+      }
+
+      var t_shij =5400;
+      var inter =window.setInterval("f_colck()",1000);
+      function f_colck()
+      {
+        t_shij -=1;
+        var t_xs = parseInt(t_shij/3600);
+        var t_fz = parseInt((t_shij%3600)/60);
+        var t_mz =(t_shij%3600)%60;
+        if(t_xs< 10) t_xs='0'+t_xs;
+        if(t_fz<10) t_fz='0'+t_fz;
+        if(t_mz<10) t_mz='0'+t_mz;
+        $(".showTime").html("<i>"+t_xs+":"+t_fz+":"+t_mz+"<i>");
+        if(t_shij ==0)
+        {
+            window.clearInterval(inter);
+            f_commit();
+        }
+
+      }
+</script>
+<body style="background: #f6f5fa;">
+<div class="super-content">
+    <div class="superCtab">
+        <div class="ctab-title clearfix"><h3 th:text="${shij}">试卷管理</h3></div>
+            <div class="ctab-Main">
+                <div class="ctab-Mian-cont">
+                    <div class="Mian-cont-btn Mian-cont-btn2 clearfix">
+                        <div class="operateBtn">
+                            <a href="javascript:;" onclick="f_commit()" class="greenbtn submit">提交</a>
+                            <a href="javascript:;" onclick="f_showDa(this)" class="greenbtn chak">查看答案</a>
+                            <span class="ksjg" hidden>你的考试分数是:<i>100</i>  分</span>
+                            <span class="showTime"><i>01:30:00</i></span> <span class="showTime_t">考试时间还剩：</span>
+                        </div>
+                     </div>
+                     <div class="Mian-cont-wrap">
+                        <div class="exam-question"  name="question" th:each="ka:${kas}" th:id="'exam_'+${ka.kaot.id}">
+                            <div class="title" >
+                                <span class="question-index ellipsis theme-skin" th:text="${ka.id}+'.'">1.</span>
+                                <span th:if="${ka.kaot.t_type eq 'single'}">(单选题)</span>
+                                <span th:if="${ka.kaot.t_type eq 'multi'}">【多选题】</span>
+                                <span class="question-name" th:text="${ka.kaot.t_pro}">互联网企业尤其是电商行业。应对大量的防访问请求，敏感数据(交易记录、用户数据)较多，对安全性的要求非常高，需要从各个层面保障业务的安全。但用户会经常受到异常流量攻击的干扰，用户应该使用哪个腾讯云的云安全产品来应对这个问题?</span>
+                            </div>
+                                <div class="answers"  name="answers" th:each="al:${ka.daaList}">
+                                 <div class="select single-select a. ">
+                                     <input th:if="${ka.kaot.t_type eq 'single'}" type="radio"  th:attr="name='radio_'+${ka.id},class='radio_1'" />
+                                     <input th:if="${ka.kaot.t_type eq 'multi'}" type="checkbox"  th:attr="name='radio_'+${ka.id},class='chk_1'" />
+                                     <span class="words-option" th:if="${alStat.index eq 0}">A. </span>
+                                     <span class="words-option" th:if="${alStat.index eq 1}">B. </span>
+                                     <span class="words-option" th:if="${alStat.index eq 2}">C. </span>
+                                     <span class="words-option" th:if="${alStat.index eq 3}">D. </span>
+                                     <span class="words" th:text="${al.t_asn}" >主机安全(CWP)</span>
+                                 </div>
+                            </div>
+                            <div class="zhan" hidden>
+                                <span>正确答案是:</span><span class="zqda" name ="zqda" th:text="${ka.kaot.t_zhan}"></span>
+                                <span>你的答案:</span><span class="yda" name="youda"></span>
+                            </div>
+                        </div>
+                     </div>
+                    <div class="Mian-cont-btn Mian-cont-btn2 clearfix">
+                        <div class="operateBtn">
+                            <a href="javascript:;" onclick="f_commit()" class="greenbtn add">提交</a>
+                            <a href="javascript:;" onclick="f_showDa(this)" class="greenbtn chak">查看答案</a>
+                            <span class="ksjg" hidden>你的考试分数是:<i>100</i>  分</span>
+                            <span class="showTime"><i>01:30:00</i></span> <span class="showTime_t">考试时间还剩：</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+         </div>
+    </div>
+</div>
+</body>
+</html>
